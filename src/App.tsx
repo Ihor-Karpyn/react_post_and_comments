@@ -1,27 +1,50 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.scss';
-import { GoodsList } from './GoodsList';
+import { Grid, Paper } from '@mui/material';
+import { PostList } from './PostList';
+import { Post } from './typedefs';
+import { getPosts } from './api/posts';
+import { CommentsList } from './CommentsList';
 
-// import { getAll, get5First, getRed } from './api/goods';
-// or
-// import * as goodsAPI from './api/goods';
+export const App: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isPostsLoading, setIsPostsLoading] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
-export const App: React.FC = () => (
-  <div className="App">
-    <h1>Dynamic list of Goods</h1>
+  const selectPost = useCallback((id: number | null) => {
+    setSelectedPostId(id);
+  }, [setSelectedPostId]);
 
-    <button type="button" data-cy="all-button">
-      Load all goods
-    </button>
+  useEffect(() => {
+    setIsPostsLoading(true);
 
-    <button type="button" data-cy="first-five-button">
-      Load 5 first goods
-    </button>
+    getPosts()
+      .then((postFromServer) => {
+        setPosts(postFromServer);
+      })
+      .finally(() => setIsPostsLoading(false));
+  }, []);
 
-    <button type="button" data-cy="red-button">
-      Load red goods
-    </button>
+  return (
+    <>
+      <h1>Fetch day 2</h1>
+      <h2>{selectedPostId}</h2>
+      <Grid container spacing={4}>
 
-    <GoodsList goods={[]} />
-  </div>
-);
+        <Grid item xs={6}>
+          <PostList
+            posts={posts}
+            isLoading={isPostsLoading}
+            onSelect={selectPost}
+            selectedPostId={selectedPostId}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          {selectedPostId && <CommentsList postId={selectedPostId} />}
+        </Grid>
+
+      </Grid>
+    </>
+  );
+};
