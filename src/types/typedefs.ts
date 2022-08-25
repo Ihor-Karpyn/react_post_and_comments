@@ -18,5 +18,5 @@ export interface Comment {
 }
 
 export type CreateCommentFragment = Pick<
-Comment, 'postId' | 'name' | 'email' | 'body'
+Comment, 'postId' | 'email' | 'body' | 'name'
 >;

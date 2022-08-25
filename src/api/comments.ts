@@ -1,4 +1,4 @@
-import { Comment, CreateCommentFragment } from '../typedefs';
+import { Comment, CreateCommentFragment } from '../types/typedefs';
 import { request } from './index';
 import { ENDPOINTS } from './constans';
 
@@ -7,13 +7,22 @@ export const getCommentsByPostId = (postId: number): Promise<Comment[]> => {
 };
 
 export const createComment = (
-  createFields: CreateCommentFragment,
+  createArgs: CreateCommentFragment,
 ): Promise<Comment> => {
   return request<Comment>(
     ENDPOINTS.comments,
     {
       method: 'POST',
-      body: JSON.stringify(createFields),
+      body: JSON.stringify(createArgs),
+    },
+  );
+};
+
+export const deleteComment = (id: number): Promise<number> => {
+  return request<number>(
+    ENDPOINTS.commentById(id),
+    {
+      method: 'DELETE',
     },
   );
 };

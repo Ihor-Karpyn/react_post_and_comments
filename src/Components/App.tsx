@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './App.scss';
-import { Grid, Paper } from '@mui/material';
-import { PostList } from './PostList';
-import { Post } from './typedefs';
-import { getPosts } from './api/posts';
-import { CommentsList } from './CommentsList';
+import { Grid } from '@mui/material';
+import { PostList } from './Posts/PostList';
+import { Post } from '../types/typedefs';
+import { getPosts } from '../api/posts';
+import { CommentsList } from './Comments/CommentsList';
 
 export const App: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,7 +28,6 @@ export const App: React.FC = () => {
   return (
     <>
       <h1>Fetch day 2</h1>
-      <h2>{selectedPostId}</h2>
       <Grid container spacing={4}>
 
         <Grid item xs={6}>

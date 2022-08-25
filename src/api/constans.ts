@@ -3,4 +3,5 @@ export const ENDPOINTS = {
   posts: '/posts',
   commentsByPostId: (postId: number) => `/comments?postId=${postId}`,
   comments: '/comments',
+  commentById: (id: number) => `/comments/${id}`,
 };
