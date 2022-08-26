@@ -1,4 +1,8 @@
-import { Comment, CreateCommentFragment } from '../types/typedefs';
+import {
+  Comment,
+  CreateCommentFragment,
+  UpdateCommentFields,
+} from '../types/typedefs';
 import { request } from './index';
 import { ENDPOINTS } from './constans';
 
@@ -23,6 +27,18 @@ export const deleteComment = (id: number): Promise<number> => {
     ENDPOINTS.commentById(id),
     {
       method: 'DELETE',
+    },
+  );
+};
+
+export const updateComment = (
+  id: number, updatedFields: UpdateCommentFields,
+): Promise<Comment> => {
+  return request<Comment>(
+    ENDPOINTS.commentById(id),
+    {
+      method: 'PATCH',
+      body: JSON.stringify(updatedFields),
     },
   );
 };

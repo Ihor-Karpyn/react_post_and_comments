@@ -27,6 +27,23 @@ export const CommentsList: FC<Props> = React.memo((props) => {
     setComments((prev) => prev.filter(c => c.id !== id));
   }, []);
 
+  const onUpdate = useCallback((updatedComment: Comment) => {
+    setComments((prev) => {
+      const newComments = [...prev];
+      const targetIndex = newComments.findIndex((c) => (
+        c.id === updatedComment.id
+      ));
+
+      if (targetIndex === -1) {
+        return newComments;
+      }
+
+      newComments.splice(targetIndex, 1, updatedComment);
+
+      return newComments;
+    });
+  }, []);
+
   useEffect(() => {
     getCommentsByPostId(postId)
       .then(res => setComments(res));
@@ -43,7 +60,11 @@ export const CommentsList: FC<Props> = React.memo((props) => {
         )}
         {comments.map((comment) => (
           <ListItem key={comment.id}>
-            <CommentItem comment={comment} onDelete={onDelete} />
+            <CommentItem
+              comment={comment}
+              onDelete={onDelete}
+              onUpdate={onUpdate}
+            />
           </ListItem>
         ))}
 

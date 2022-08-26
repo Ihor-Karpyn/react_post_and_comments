@@ -13,7 +13,7 @@ export const App: React.FC = () => {
 
   const selectPost = useCallback((id: number | null) => {
     setSelectedPostId(id);
-  }, [setSelectedPostId]);
+  }, []);
 
   useEffect(() => {
     setIsPostsLoading(true);

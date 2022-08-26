@@ -20,3 +20,7 @@ export interface Comment {
 export type CreateCommentFragment = Pick<
 Comment, 'postId' | 'email' | 'body' | 'name'
 >;
+
+export type UpdateCommentFields = Partial<
+Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>
+>;
