@@ -5,18 +5,15 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Post } from '../../types/typedefs';
+import { useAppDispatch, useAppSelector } from '../../app/hook';
+import { setSelectedPostId } from '../../features/postsStateSlice';
 
-interface Props {
-  posts: Post[]
-  isLoading: boolean;
-  onSelect: (postId: number | null) => void;
-  selectedPostId: number | null;
-}
-
-export const PostList: FC<Props> = React.memo((props) => {
+export const PostList: FC = React.memo(() => {
   const {
-    posts, isLoading, onSelect, selectedPostId,
-  } = props;
+    posts, isLoading, selectedPostId,
+  } = useAppSelector(state => state.postsState);
+
+  const dispatch = useAppDispatch();
 
   return (
     <Paper elevation={12} style={{ overflowY: 'scroll', height: '90vh' }}>
@@ -42,7 +39,7 @@ export const PostList: FC<Props> = React.memo((props) => {
                       ? 'contained'
                       : 'outlined'}
                     size="medium"
-                    onClick={() => onSelect(post.id)}
+                    onClick={() => dispatch(setSelectedPostId(post.id))}
                   >
                     comments
                   </LoadingButton>

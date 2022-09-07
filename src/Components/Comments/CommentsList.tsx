@@ -9,6 +9,8 @@ import { Comment } from '../../types/typedefs';
 import { getCommentsByPostId } from '../../api/comments';
 import { CommentItem } from './CommentItem';
 import { CreateCommentForm } from './CreateCommentForm/CreateCommentForm';
+import { useAppDispatch, useAppSelector } from '../../app/hook';
+import { fetchCommentsByPostIdAction } from '../../features/commentsStateSlice';
 
 interface Props {
   postId: number;
@@ -17,37 +19,35 @@ interface Props {
 export const CommentsList: FC<Props> = React.memo((props) => {
   const { postId } = props;
 
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  const onAdd = useCallback((newComment: Comment) => {
-    setComments((prev) => [...prev, newComment]);
-  }, [setComments]);
-
-  const onDelete = useCallback((id: number) => {
-    setComments((prev) => prev.filter(c => c.id !== id));
-  }, []);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getCommentsByPostId(postId)
-      .then(res => setComments(res));
+    dispatch(fetchCommentsByPostIdAction(postId));
   }, [postId]);
+
+  const comments = useAppSelector(state => (
+    state.commentsState.comments[postId] || []
+  ));
+
+  const { isLoading } = useAppSelector(state => state.commentsState);
 
   return (
     <Paper elevation={12} style={{ overflowY: 'scroll', height: '90vh' }}>
       <List>
-        {comments.length === 0 && (
+        {comments.length === 0 && !isLoading && (
           <Alert severity="info" sx={{ margin: '16px' }}>
             There are no comments yet
           </Alert>
 
         )}
+        {isLoading && !comments.length && <h1>loading</h1>}
         {comments.map((comment) => (
           <ListItem key={comment.id}>
-            <CommentItem comment={comment} onDelete={onDelete} />
+            <CommentItem comment={comment} onDelete={() => {}} />
           </ListItem>
         ))}
 
-        <CreateCommentForm postId={postId} onAdd={onAdd} />
+        <CreateCommentForm postId={postId} onAdd={() => {}} />
 
       </List>
     </Paper>
