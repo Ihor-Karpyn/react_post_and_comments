@@ -1,5 +1,5 @@
 import React, {
-  FC, useCallback, useEffect, useState,
+  FC, useCallback, useEffect, useMemo, useState,
 } from 'react';
 import {
   List, ListItem, Paper,
@@ -9,8 +9,10 @@ import { Comment } from '../../types/typedefs';
 import { getCommentsByPostId } from '../../api/comments';
 import { CommentItem } from './CommentItem';
 import { CreateCommentForm } from './CreateCommentForm/CreateCommentForm';
-import { useAppDispatch, useAppSelector } from '../../app/hook';
-import { fetchCommentsByPostIdAction } from '../../features/commentsStateSlice';
+import {
+  useGetCommentsByPostIdQuery,
+  useLazyGetCommentsByPostIdQuery,
+} from '../../features/api/comments.api';
 
 interface Props {
   postId: number;
@@ -19,37 +21,39 @@ interface Props {
 export const CommentsList: FC<Props> = React.memo((props) => {
   const { postId } = props;
 
-  const dispatch = useAppDispatch();
+  const {
+    data, isLoading, isError, refetch,
+  } = useGetCommentsByPostIdQuery(
+    postId,
+    { refetchOnMountOrArgChange: true },
+  );
 
-  useEffect(() => {
-    dispatch(fetchCommentsByPostIdAction(postId));
-  }, [postId]);
-
-  const comments = useAppSelector(state => (
-    state.commentsState.comments[postId] || []
-  ));
-
-  const { isLoading } = useAppSelector(state => state.commentsState);
+  const comments: Comment[] = useMemo(() => (data || []),
+    [data]);
 
   return (
-    <Paper elevation={12} style={{ overflowY: 'scroll', height: '90vh' }}>
-      <List>
-        {comments.length === 0 && !isLoading && (
-          <Alert severity="info" sx={{ margin: '16px' }}>
-            There are no comments yet
-          </Alert>
+    <>
+      <button type="button" onClick={refetch}>sdfsdf</button>
+      <Paper elevation={12} style={{ overflowY: 'scroll', height: '90vh' }}>
+        <List>
+          {comments.length === 0 && !isLoading && (
+            <Alert severity="info" sx={{ margin: '16px' }}>
+              There are no comments yet
+            </Alert>
 
-        )}
-        {isLoading && !comments.length && <h1>loading</h1>}
-        {comments.map((comment) => (
-          <ListItem key={comment.id}>
-            <CommentItem comment={comment} onDelete={() => {}} />
-          </ListItem>
-        ))}
+          )}
+          {isLoading && !comments.length && <h1>loading</h1>}
+          {comments.map((comment) => (
+            <ListItem key={comment.id}>
+              <CommentItem comment={comment} onDelete={() => {}} />
+            </ListItem>
+          ))}
 
-        <CreateCommentForm postId={postId} onAdd={() => {}} />
+          <CreateCommentForm postId={postId} onAdd={() => {}} />
 
-      </List>
-    </Paper>
+        </List>
+      </Paper>
+    </>
+
   );
 });

@@ -7,6 +7,7 @@ import {
   fetchPostsAction,
 } from './features/postsStateSlice';
 import { useAppDispatch, useAppSelector } from './app/hook';
+import { useGetCommentsByPostIdQuery } from './features/api/comments.api';
 
 export const App: React.FC = () => {
   const dispatch = useAppDispatch();

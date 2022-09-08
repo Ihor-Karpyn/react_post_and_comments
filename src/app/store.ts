@@ -1,12 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
 import postsStateReducer from '../features/postsStateSlice';
-import { commentsStateReducer } from '../features/commentsStateSlice';
+import { commentsApi } from '../features/api/comments.api';
 
 export const store = configureStore({
   reducer: {
     postsState: postsStateReducer,
-    commentsState: commentsStateReducer,
+    // commentsState: commentsStateReducer,
+    comments: commentsApi.reducer,
   },
+  middleware: (getDefaultMiddleware) => (
+    getDefaultMiddleware().concat(commentsApi.middleware)
+  ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
